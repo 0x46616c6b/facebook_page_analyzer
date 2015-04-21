@@ -1,0 +1,9 @@
+parameters:
+    secret: be16235031077203afe0c3608a0a3c3bca878a4f
+    elastic_host: localhost
+    elastic_port: 9200
+    fb_page_name: pegida
+    fb_page_id: 790669100971515
+    fb_app_id: ~
+    fb_app_secret: ~
+    fb_access_token: ~

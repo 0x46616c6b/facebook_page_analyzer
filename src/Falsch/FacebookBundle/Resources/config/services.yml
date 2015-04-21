@@ -1,0 +1,18 @@
+services:
+  handler.elastic:
+    class: Falsch\FacebookBundle\Handler\ElasticHandler
+    arguments:
+      - %elastic_host%
+      - %elastic_port%
+
+  transformer.elastic:
+    class: Falsch\FacebookBundle\Handler\ElasticTransformer
+    arguments:
+      - %fb_page_name%
+
+  handler.facebook:
+    class: Falsch\FacebookBundle\Handler\FacebookHandler
+    arguments:
+      - %fb_app_id%
+      - %fb_app_secret%
+      - %fb_access_token%
