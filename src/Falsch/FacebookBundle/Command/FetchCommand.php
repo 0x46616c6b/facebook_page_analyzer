@@ -33,6 +33,10 @@ class FetchCommand extends ContainerAwareCommand
      */
     private $since;
     /**
+     * @var string
+     */
+    private $indexName;
+    /**
      * @var InputInterface
      */
     private $input;
@@ -61,15 +65,31 @@ class FetchCommand extends ContainerAwareCommand
         $this
             ->setName(self::PROGRAM_NAME)
             ->setDescription('Fetch a Page from Facebook')
-            ->addOption(self::OPTION_ONLY_POSTS, null, InputOption::VALUE_NONE, 'If set, the task fetch only posts')
-            ->addOption(self::OPTION_FETCH_LIKES, null, InputOption::VALUE_NONE, 'If set, the task fetch the likes')
+            ->addOption(
+                self::OPTION_ONLY_POSTS,
+                null,
+                InputOption::VALUE_NONE,
+                'If set, the task fetch only posts'
+            )
+            ->addOption(
+                self::OPTION_FETCH_LIKES,
+                null,
+                InputOption::VALUE_NONE,
+                'If set, the task fetch the likes'
+            )
             ->addOption(
                 self::OPTION_FETCH_COMMENTS,
                 null,
                 InputOption::VALUE_NONE,
                 'If set, the task fetch the comments'
             )
-            ->addOption(self::OPTION_LIMIT, null, InputOption::VALUE_OPTIONAL, 'Paging for Facebook Request', 250)
+            ->addOption(
+                self::OPTION_LIMIT,
+                null,
+                InputOption::VALUE_OPTIONAL,
+                'Paging for Facebook Request',
+                250
+            )
             ->addOption(
                 self::OPTION_SINCE,
                 null,
@@ -118,9 +138,9 @@ class FetchCommand extends ContainerAwareCommand
     }
 
     /**
-     * @return array|null
+     * @return Document[]|null
      */
-    protected function fetchPosts()
+    private function fetchPosts()
     {
         $this->output->writeln('Fetching posts from the Facebook Page');
 
@@ -142,57 +162,63 @@ class FetchCommand extends ContainerAwareCommand
     /**
      * @param Document[] $posts
      */
-    protected function fetchLikes(array $posts)
+    private function fetchLikes(array $posts)
     {
-        $this->output->writeln('Fetch all likes for posts');
-
-        foreach ($posts as $post) {
-            /** @var Document $post */
-            $postId = $post->getId();
-
-            $this->writeVerbosePostProgress($postId);
-
-            $request = $this->getRequest(sprintf('/%s/likes', $postId));
-            $data = $this->facebookHandler->fetchObjects($request);
-
-            if (empty($data)) {
-                return;
-            }
-
-            $likes = $this->elasticTransformer->transformLikes($data, $postId);
-            $this->elasticHandler->process($likes, $this->indexName, 'like');
-        }
+        $this->fetchByType($posts, 'like');
     }
 
     /**
      * @param Document[] $posts
      */
-    protected function fetchComments(array $posts)
+    private function fetchComments(array $posts)
     {
-        $this->output->writeln('Fetch all comments for posts');
+        $this->fetchByType($posts, 'comment');
+    }
+
+    /**
+     * @param Document[] $posts
+     * @param $type
+     */
+    private function fetchByType(array $posts, $type)
+    {
+        if (!in_array($type, array('like', 'comment'))) {
+            $this->output->writeln('<error>Unsupported Type!</error>');
+
+            return;
+        }
+
+        $this->output->writeln('Fetch all '.$type.' for posts');
 
         foreach ($posts as $post) {
-            /** @var Document $post */
             $postId = $post->getId();
 
             $this->writeVerbosePostProgress($postId);
 
-            $request = $this->getRequest(sprintf('/%s/comments', $postId));
-            $data = $this->facebookHandler->fetchObjects($request);
+            $request = $this->getRequest(sprintf('/%s/%ss', $postId, $type));
+            $objects = $this->facebookHandler->fetchObjects($request);
 
-            if (empty($data)) {
-                return;
+            if (empty($objects)) {
+                if (OutputInterface::VERBOSITY_VERBOSE === $this->output->getVerbosity()) {
+                    $this->output->writeln('<info>[INFO] No '.$type.' found!</info>');
+                }
+
+                continue;
             }
 
-            $comments = $this->elasticTransformer->transformComments($data, $postId);
-            $this->elasticHandler->process($comments, $this->indexName, 'comment');
+            if ($type === 'like') {
+                $data = $this->elasticTransformer->transformLikes($objects, $postId);
+            } else {
+                $data = $this->elasticTransformer->transformComments($objects, $postId);
+            }
+
+            $this->elasticHandler->process($data, $this->indexName, $type);
         }
     }
 
     /**
      * @param $postId
      */
-    protected function writeVerbosePostProgress($postId)
+    private function writeVerbosePostProgress($postId)
     {
         if (OutputInterface::VERBOSITY_VERBOSE === $this->output->getVerbosity()) {
             $this->output->writeln('<fg=black;bg=cyan>[DEBUG]</fg=black;bg=cyan> Process Post: '.$postId);

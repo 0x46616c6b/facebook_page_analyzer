@@ -23,7 +23,7 @@ class ElasticTransformer
     /**
      * @param GraphObject[] $objects
      *
-     * @return array
+     * @return Document[]
      */
     public function transformPosts(array $objects)
     {
@@ -66,7 +66,7 @@ class ElasticTransformer
      * @param GraphObject[] $objects
      * @param string $postId
      *
-     * @return array
+     * @return Document[]
      */
     public function transformLikes(array $objects, $postId)
     {
@@ -101,7 +101,7 @@ class ElasticTransformer
      * @param GraphObject[] $objects
      * @param string $postId
      *
-     * @return array
+     * @return Document[]
      */
     public function transformComments(array $objects, $postId)
     {

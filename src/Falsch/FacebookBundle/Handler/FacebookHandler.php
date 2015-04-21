@@ -11,9 +11,21 @@ use Facebook\FacebookSession;
  */
 class FacebookHandler
 {
+    /**
+     * @var FacebookSession|null
+     */
     static $session = null;
+    /**
+     * @var string
+     */
     private $appId;
+    /**
+     * @var string
+     */
     private $appSecret;
+    /**
+     * @var string
+     */
     private $accessToken;
 
     /**
