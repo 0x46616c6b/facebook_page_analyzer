@@ -2,7 +2,7 @@
 
 [![License](https://poser.pugx.org/falsch/facebook_page_analyzer/license)](https://packagist.org/packages/falsch/facebook_page_analyzer)
 [![Latest Stable Version](https://poser.pugx.org/falsch/facebook_page_analyzer/v/stable)](https://packagist.org/packages/falsch/facebook_page_analyzer)
-[![Latest Stable Version](https://poser.pugx.org/falsch/facebook_page_analyzer/v/stable)](https://packagist.org/packages/falsch/facebook_page_analyzer)
+[![Latest Unstable Version](https://poser.pugx.org/falsch/facebook_page_analyzer/v/unstable)](https://packagist.org/packages/falsch/facebook_page_analyzer)
 [![Gitter chat](https://badges.gitter.im/0x46616c6b/facebook_page_analyzer.png)](https://gitter.im/0x46616c6b/facebook_page_analyzer)
 
 ![Logo](http://i.imgur.com/I5mjWip.png =250px)
