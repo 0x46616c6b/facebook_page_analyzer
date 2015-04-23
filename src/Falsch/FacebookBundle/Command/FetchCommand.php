@@ -118,22 +118,27 @@ class FetchCommand extends ContainerAwareCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $timerStart = microtime(true);
+
         if (null !== $since = $input->getOption(self::OPTION_SINCE)) {
             $this->since = strtotime($since);
         }
 
         $posts = $this->fetchPosts();
 
-        if ($input->getOption(self::OPTION_ONLY_POSTS)) {
-            return;
-        }
-
-        if ($input->getOption(self::OPTION_FETCH_LIKES)) {
+        if ($input->getOption(self::OPTION_FETCH_LIKES) && !$input->getOption(self::OPTION_ONLY_POSTS)) {
             $this->fetchLikes($posts);
         }
 
-        if ($input->getOption(self::OPTION_FETCH_COMMENTS)) {
+        if ($input->getOption(self::OPTION_FETCH_COMMENTS) && !$input->getOption(self::OPTION_ONLY_POSTS)) {
             $this->fetchComments($posts);
+        }
+
+        $timerEnd = microtime(true);
+        $duration = $timerEnd - $timerStart;
+
+        if (OutputInterface::VERBOSITY_DEBUG === $output->getVerbosity()) {
+            $output->writeln('<info>[DEBUG] Command took '. $duration .' seconds');
         }
     }
 
@@ -221,7 +226,7 @@ class FetchCommand extends ContainerAwareCommand
     private function writeVerbosePostProgress($postId)
     {
         if (OutputInterface::VERBOSITY_VERBOSE === $this->output->getVerbosity()) {
-            $this->output->writeln('<fg=black;bg=cyan>[DEBUG]</fg=black;bg=cyan> Process Post: '.$postId);
+            $this->output->writeln('<fg=black;bg=cyan>[VERBOSE]</fg=black;bg=cyan> Process Post: '.$postId);
         }
     }
 
