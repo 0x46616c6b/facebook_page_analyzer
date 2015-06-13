@@ -126,6 +126,12 @@ class FetchCommand extends ContainerAwareCommand
 
         $posts = $this->fetchPosts();
 
+        if (null === $posts) {
+            $output->writeln('<info>No posts found.');
+
+            return;
+        }
+
         if ($input->getOption(self::OPTION_FETCH_LIKES) && !$input->getOption(self::OPTION_ONLY_POSTS)) {
             $this->fetchLikes($posts);
         }
