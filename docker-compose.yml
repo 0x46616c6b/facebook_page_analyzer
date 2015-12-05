@@ -1,0 +1,10 @@
+elasticsearch:
+  image: elasticsearch:2.1
+  ports:
+    - "9200:9200"
+kibana:
+  image: kibana:latest
+  links:
+    - elasticsearch
+  ports:
+    - "80:5601"
