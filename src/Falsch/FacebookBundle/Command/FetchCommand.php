@@ -23,6 +23,7 @@ class FetchCommand extends ContainerAwareCommand
     const OPTION_FETCH_COMMENTS = 'fetch-comments';
     const OPTION_LIMIT = 'limit';
     const OPTION_SINCE = 'since';
+    const OPTION_BEFORE = 'before';
 
     /**
      * @var int
@@ -32,6 +33,10 @@ class FetchCommand extends ContainerAwareCommand
      * @var int
      */
     private $since;
+    /**
+     * @var int
+     */
+    private $before;
     /**
      * @var string
      */
@@ -94,7 +99,14 @@ class FetchCommand extends ContainerAwareCommand
                 self::OPTION_SINCE,
                 null,
                 InputOption::VALUE_OPTIONAL,
-                'Fetch only data since a special "strtotime" term, like "yesterday"'
+                'Fetch only data since a special "strtotime" term, like "yesterday"',
+                'yesterday'
+            )
+            ->addOption(
+                self::OPTION_BEFORE,
+                null,
+                InputOption::VALUE_OPTIONAL,
+                'Fetch only data before a special "strtotime" term, like "yesterday"'
             );
     }
 
@@ -111,6 +123,10 @@ class FetchCommand extends ContainerAwareCommand
         if (null !== $since = $input->getOption(self::OPTION_SINCE)) {
             $this->since = strtotime($since);
         }
+
+        if (null !== $before = $input->getOption(self::OPTION_BEFORE)) {
+            $this->before = strtotime($before);
+        }
     }
 
     /**
@@ -122,6 +138,10 @@ class FetchCommand extends ContainerAwareCommand
 
         if (null !== $since = $input->getOption(self::OPTION_SINCE)) {
             $this->since = strtotime($since);
+        }
+
+        if (null !== $before = $input->getOption(self::OPTION_SINCE)) {
+            $this->before = strtotime($before);
         }
 
         $posts = $this->fetchPosts();
@@ -261,6 +281,10 @@ class FetchCommand extends ContainerAwareCommand
 
         if (null !== $this->since) {
             $params[self::OPTION_SINCE] = $this->since;
+        }
+
+        if (null !== $this->before) {
+            $params[self::OPTION_BEFORE] = $this->before;
         }
 
         return $params;

@@ -39,3 +39,4 @@ For months the PEGIDA-movement (Patriotic Europeans Against the Islamization of 
 	 --fetch-comments      If set, the task fetch the comments
 	 --limit               Paging for Facebook Request (default: 250)
 	 --since               Fetch only data since a special "strtotime" term, like "yesterday"
+	 --before              Fetch only data before a special "strtotime" term, like "yesterday"
