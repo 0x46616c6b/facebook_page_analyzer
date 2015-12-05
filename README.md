@@ -25,6 +25,9 @@ For months the PEGIDA-movement (Patriotic Europeans Against the Islamization of 
 
 	cd analyzer
 
+	# boot up elasticsearch and kibana
+	docker-composer up -d
+
 	php app/console fetch --fetch-likes --fetch-comments
 
 
